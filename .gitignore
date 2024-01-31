@@ -2,3 +2,4 @@ dataset/baldurs-gate-3-steam-reviews.zip
 dataset/BG3_reviews_updated.csv
 .ipynb_checkpoints
 gpt2-lora-review_generation
+gpt2-lora-classification

@@ -3,3 +3,4 @@ dataset/BG3_reviews_updated.csv
 .ipynb_checkpoints
 gpt2-lora-review_generation
 gpt2-lora-classification
+.kaggle/kaggle.json

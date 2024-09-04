@@ -7,7 +7,11 @@
 ## Overview
 This repository contains the final project for our Data Science course in Winter 2024. The project fine-tunes the GPT-2 language model to generate and classify Steam reviews, specifically for the 2023 video game **"Baldur's Gate 3"**. 
 
-Using GPT-2 from Hugging Face and the LoRA fine-tuning technique, two separate models were created: one for generating new reviews and another for classifying the sentiment of reviews as positive or negative.
+Using **GPT-2** from Hugging Face and the LoRA (Low Rank Adaptation) fine-tuning technique, two separate models were created: one for generating new reviews and another for classifying the sentiment of reviews as positive or negative.
+
+These models can also be found on HuggingFace: 
+<br>[gpt2-lora-review-generation](https://huggingface.co/Mahan-M47/gpt2-lora-review-generation)
+<br>[gpt2-lora-review-classification](https://huggingface.co/Mahan-M47/gpt2-lora-review-classification)
 
 
 ## Features
@@ -20,23 +24,18 @@ Using GPT-2 from Hugging Face and the LoRA fine-tuning technique, two separate m
 ## Project Structure
 
 ```
-├── app.py            # The main application file.
-├── model/            # Contains model weights for the fine-tuned GPT-2 models.
-├── dataset/          # Preprocessed datasets
-├── notebooks/        # Jupyter notebooks for EDA, fine-tuning, and evaluation.
-└── report.pdf        # A comprehensive report detailing the project
+├── app.py             # The main application file.
+├── requirements.txt   # A list of required libraries for running app.py
+├── model/             # Contains model weights for the fine-tuned GPT-2 models.
+├── dataset/           # Preprocessed datasets
+├── notebooks/         # Jupyter notebooks for EDA, fine-tuning, and evaluation.
+└── report.pdf         # A comprehensive report detailing the project
 ```
 
 Note: If you plan to run the notebooks, place your Kaggle token inside the `.kaggle` folder. Ensure it is named `kaggle.json`.
 
 
-## Dataset
-The dataset used in this project consists of all English-language Steam reviews for Baldur's Gate 3, which can be found [here](https://www.kaggle.com/datasets/harisyafie/baldurs-gate-3-steam-reviews). The dataset has been preprocessed and is available in the `dataset/` directory. 
-
-Note that the raw dataset is not included due to size limitations, however running the `EDA - Preprocess.ipynb` notebook automatically downloads the full dataset, provided you have placed your Kaggle token.
-
-
-## Installation
+## Usage
 To run this project locally, follow these steps:
 1. Clone the repository:
 2. Install the required packages:
@@ -48,10 +47,30 @@ To run this project locally, follow these steps:
       streamlit run app.py
     ```
 
-## Usage
-Once the Streamlit app is running, you can interact with the following features:
+<br>Once the Streamlit app is running, the following features are available:
 - **Generate Review:** Input a prompt related to Baldur's Gate 3, and the model will generate a corresponding Steam review. Leave the prompt empty to generate a fully random review.
 - **Classify Review:** After a review has been generated, the model will classify it as either positive or negative.
+
+
+## Dataset
+The dataset used in this project consists of all English-language Steam reviews for Baldur's Gate 3, which can be found [here](https://www.kaggle.com/datasets/harisyafie/baldurs-gate-3-steam-reviews). It contains more than 300’000 records of reviews from real Steam users who have purchased the video game on Steam. The dataset has been preprocessed and is available in the `dataset/` directory. 
+
+Note that the raw dataset is not included due to size limitations, however running the `EDA - Preprocess.ipynb` notebook automatically downloads the full dataset, provided you have placed your Kaggle token.
+
+
+## Exploratory Data Analysis (EDA) & Preprocessing
+Detailed analysis and visualizations were performed to understand the distribution of review sentiments, word frequency, and other insights. The EDA results are available in the notebooks provided.
+
+Preprocessing the dataset involved multiple steps to determine the ideal features and select the most effective ones. 
+
+Text Formatting: Cleaning and formatting the text data, also known as the corpus, is another major preprocessing task. Using Regular Expressions, the text corpus can be formatted in a way that is more appropriate for tokenization and model training. The goal is to select the words that can help us train the model as efficiently as possible. This means non-alphanumeric characters and other elements such as markdown tags should be removed. The text corpus is converted to lowercase to simplify the tokenization process.
+
+Feature engineering: One additional feature that we added to the dataset is word_count, which is the number of words in a review. It is preferred to use text inputs that are approximately the same length as each other for fine-tuning or training a language model, so this feature can be used to select records that are more similar to each other.
+Profanity check: Steam does not handle profanity in its review system, so it’s up to us to detect profane reviews and remove them. The goal is to prevent the model from learning and generating potentially offensive and inappropriate text.
+
+Data selection: Finally, a limited collection of records must be selected for the actual training process. Records containing reviews that are too short or too long should be dropped. Additionally, records with zero number of upvotes can be dropped as they were not popular enough to grab the attention of a human.
+
+We aim to select the most helpful reviews, so out of all the remaining records, the top 10’000 were chosen based on their weighted_vote_score. This feature is calculated by Steam as an internal measure for review popularity. Steam uses the weighted_vote_score to display the most popular reviews for each video game, so it seems logical for us to sort our data based on it. 
 
 
 ## Model Details
@@ -62,9 +81,12 @@ With the aim of automated game review creation and sentiment classification, our
 For our analysis, we choose the base version of GPT-2, which has 124M parameters. **GPT2ForSequenceClassification** and **AutoModelForCausalLM(gpt2)** are two different GPT-2 variations that we used, each designed to address different parts of our task:
 
 
-### Tokenization & Fine-tuning approach
+### Tokenization & Fine-tuning
 
-Our chosen approach fine-tuning approach includes Progressive Early Fine-Tuning (Peft) with a special focus on the Low-Rank Adaptation (LoRA) technique, which improves the GPT-2 model's adaptability for our goal objective.
+Our chosen approach fine-tuning approach includes Progressive Early Fine-Tuning (Peft) with a special focus on the **Low-Rank Adaptation (LoRA)** technique, which improves the GPT-2 model's adaptability for our goal while reducing the required processing power for fine-tuning GPT-2.
+
+Tokenization is a key process in natural language processing that involves dividing a given text into smaller units called tokens. These tokens provide a structured representation of the text.
+A tokenizer is in charge of tokenizing the inputs for a model. The Tokenizer library contains pre-trained tokenizers for all the models used in this project. We specifically used the AutoTokenizer class which automatically creates the corresponding tokenizer object for a given model.
 
 ### Versions
 
@@ -76,10 +98,6 @@ Our chosen approach fine-tuning approach includes Progressive Early Fine-Tuning 
 
 - **Classification model v1:** The first version of our classification model. This model is based on GPT-2 (using AutoModelForSequenceClassification) and was fine-tuned on the same 10’000 data points as the causal models. Due to the imbalance of negative and positive reviews in the dataset (with over 95 percent of the reviews being positive), this model isn’t capable of classification and reports all inputs as positive.
 - **Classification model v2:** The second iteration of the classification model. This model was fine-tuned on a more balanced dataset with 5000 positive and 5000 negative records. It is surprisingly effective at classifying reviews (and other text formats) as being mostly negative or mostly positive. It can potentially be used in sentiment analysis tasks.
-
-
-## Exploratory Data Analysis (EDA)
-Detailed analysis and visualizations were performed to understand the distribution of review sentiments, word frequency, and other insights. The EDA results are available in the notebooks provided.
 
 
 ## Results

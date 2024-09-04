@@ -4,7 +4,7 @@
   <img height=320 src="Media/bg3-thumb.jpg" >
 </p>
 
-## Overview
+
 This repository contains the final project for our Data Science course in Winter 2024. The project fine-tunes the GPT-2 language model to generate and classify Steam reviews, specifically for the 2023 video game **"Baldur's Gate 3"**. 
 
 Using **GPT-2** from Hugging Face and the LoRA (Low Rank Adaptation) fine-tuning technique, two separate models were created: one for generating new reviews and another for classifying the sentiment of reviews as positive or negative.
@@ -12,6 +12,18 @@ Using **GPT-2** from Hugging Face and the LoRA (Low Rank Adaptation) fine-tuning
 These models can also be found on HuggingFace: 
 <br>[gpt2-lora-review-generation](https://huggingface.co/Mahan-M47/gpt2-lora-review-generation)
 <br>[gpt2-lora-review-classification](https://huggingface.co/Mahan-M47/gpt2-lora-review-classification)
+
+
+## Table of Contents
+
+- [Features](#features)
+- [Project Structure](#project-structure)
+- [Usage](#usage)
+- [Dataset](#dataset)
+- [Model Details](#model-details)
+- [Results](#results)
+- [Resources & References](#resources--references)
+- [License](#license)
 
 
 ## Features
@@ -58,19 +70,12 @@ The dataset used in this project consists of all English-language Steam reviews 
 Note that the raw dataset is not included due to size limitations, however running the `EDA - Preprocess.ipynb` notebook automatically downloads the full dataset, provided you have placed your Kaggle token.
 
 
-## Exploratory Data Analysis (EDA) & Preprocessing
+### Exploratory Data Analysis & Preprocessing
 Detailed analysis and visualizations were performed to understand the distribution of review sentiments, word frequency, and other insights. The EDA results are available in the notebooks provided.
 
-Preprocessing the dataset involved multiple steps to determine the ideal features and select the most effective ones. 
+Preprocessing the dataset involved multiple steps to determine the ideal features and select the most effective ones. These steps include Text Formatting, Feature engineering, and Profanity check.
 
-Text Formatting: Cleaning and formatting the text data, also known as the corpus, is another major preprocessing task. Using Regular Expressions, the text corpus can be formatted in a way that is more appropriate for tokenization and model training. The goal is to select the words that can help us train the model as efficiently as possible. This means non-alphanumeric characters and other elements such as markdown tags should be removed. The text corpus is converted to lowercase to simplify the tokenization process.
-
-Feature engineering: One additional feature that we added to the dataset is word_count, which is the number of words in a review. It is preferred to use text inputs that are approximately the same length as each other for fine-tuning or training a language model, so this feature can be used to select records that are more similar to each other.
-Profanity check: Steam does not handle profanity in its review system, so it’s up to us to detect profane reviews and remove them. The goal is to prevent the model from learning and generating potentially offensive and inappropriate text.
-
-Data selection: Finally, a limited collection of records must be selected for the actual training process. Records containing reviews that are too short or too long should be dropped. Additionally, records with zero number of upvotes can be dropped as they were not popular enough to grab the attention of a human.
-
-We aim to select the most helpful reviews, so out of all the remaining records, the top 10’000 were chosen based on their weighted_vote_score. This feature is calculated by Steam as an internal measure for review popularity. Steam uses the weighted_vote_score to display the most popular reviews for each video game, so it seems logical for us to sort our data based on it. 
+Another important step is Data selection; where a limited collection of records were selected for the actual training process. We aimed to select the most helpful reviews, so out of all the remaining records, the top 10’000 were chosen based on their `weighted_vote_score`. This feature is calculated by Steam as an internal measure for review popularity.
 
 
 ## Model Details

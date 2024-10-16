@@ -103,6 +103,11 @@ A tokenizer is in charge of tokenizing the inputs for a model. The `Tokenizer` l
 ### Fine-tuning
 Our chosen fine-tuning approach includes Progressive Early Fine-Tuning (Peft) with a special focus on the **Low-Rank Adaptation (LoRA)** technique, which improves the GPT-2 model's adaptability for our goal while reducing the required processing power for fine-tuning GPT-2.
 
+<br>
+<p align="center">
+  <img height=250 src="Media/Lora.png" >
+</p>
+
 ### Versions
 Four different versions of the Causal model and two different versions of the Classification model are available in the `model` directory. Refer to the `LLM - Steam Review Generator - Report.pdf` file for details on each version of the model.
 
@@ -110,7 +115,14 @@ Note that **Causal model v3** and **Classification model v2** performed best for
 
 
 ## Results
-The project successfully demonstrated the ability to generate and classify reviews for Baldur's Gate 3 using fine-tuned GPT-2 models. Detailed results and model performance metrics can be found in the `LLM - Steam Review Generator - Report.pdf` file.
+The project successfully demonstrated the ability to generate and classify reviews for Baldur's Gate 3 using fine-tuned GPT-2 models. For this project, a total of 4 models were fine-tuned for Causal LLM, and 2 models were fine-tuned for Sequence Classification. Detailed results and model performance metrics can be found in the `LLM - Steam Review Generator - Report.pdf` file.
+
+All 4 versions of the Causal LLM were evaluated using ROUGE and Perplexity. Intuitively, Perplexity means to be surprised. We measure how much the model is surprised by seeing new data. The lower the perplexity, the better the training is:
+
+<br>
+<p align="center">
+  <img height=300 src="Media/perplexity.png" >
+</p>
 
 
 ## Resources & References
